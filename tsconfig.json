@@ -16,9 +16,6 @@
     "resolveJsonModule": true,
     "noEmit": false
   },
-  "ts-node": {
-    "esm": true
-  },
   "include": [
     "src/**/*"
   ],
