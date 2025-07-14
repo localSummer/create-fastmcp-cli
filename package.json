@@ -21,7 +21,7 @@
     "template",
     "generator"
   ],
-  "author": "cnpm-create-fastmcp-cli",
+  "author": "wangxingwen",
   "license": "MIT",
   "dependencies": {
     "@types/react": "^18.2.0",
