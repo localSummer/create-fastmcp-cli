@@ -15,7 +15,7 @@ export function registerGitCommitPrompt(server: FastMCP): void {
         required: true,
       },
     ],
-    load: async (args: { changes: string }) => {
+    load: async (args: any) => {
       return `Generate a concise but descriptive commit message for these changes:\n\n${args.changes}`;
     },
   });

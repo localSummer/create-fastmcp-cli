@@ -8,10 +8,9 @@
     "create-fastmcp-cli": "./dist/index.js"
   },
   "scripts": {
-    "build": "tsc",
     "dev": "ts-node src/index.ts",
     "start": "node dist/index.js",
-    "prepare": "npm run build",
+    "build": "tsc",
     "fix-imports": "node scripts/fix-imports.js"
   },
   "keywords": [
