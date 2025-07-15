@@ -6,11 +6,11 @@ import PortInput from './PortInput.js';
 import ProjectGenerator from './ProjectGenerator.js';
 import { CreateAppProps, TransportType } from '../types/index.js';
 
-const CreateApp: React.FC<CreateAppProps> = ({ 
-  projectName: initialProjectName, 
-  transport: initialTransport = 'stdio', 
+const CreateApp: React.FC<CreateAppProps> = ({
+  projectName: initialProjectName,
+  transport: initialTransport = 'stdio',
   port: initialPort = '3000',
-  interactive = true 
+  interactive = true,
 }) => {
   const [step, setStep] = useState(0);
   const [projectName, setProjectName] = useState(initialProjectName || '');
@@ -55,27 +55,25 @@ const CreateApp: React.FC<CreateAppProps> = ({
       <Text color="blue" bold>
         🚀 FastMCP 项目生成器
       </Text>
-      <Text color="gray">
-        创建基于 fastmcp TypeScript 的 MCP 服务器项目
-      </Text>
+      <Text color="gray">创建基于 FastMCP TypeScript 的 MCP 服务器项目</Text>
       <Box marginTop={1} />
 
       {step === 0 && (
-        <ProjectNameInput 
+        <ProjectNameInput
           initialValue={projectName}
-          onSubmit={handleProjectNameSubmit} 
+          onSubmit={handleProjectNameSubmit}
         />
       )}
 
       {step === 1 && (
-        <TransportSelector 
+        <TransportSelector
           onSelect={handleTransportSelect}
           defaultValue={transport}
         />
       )}
 
       {step === 2 && (
-        <PortInput 
+        <PortInput
           initialValue={port}
           onSubmit={handlePortSubmit}
           transport={transport}

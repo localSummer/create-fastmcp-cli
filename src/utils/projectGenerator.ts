@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 
 export async function generateProject(data: TemplateData): Promise<void> {
   const projectPath = path.join(process.cwd(), data.projectName);
-  
+
   // 确保项目目录不存在
   if (await fs.pathExists(projectPath)) {
     throw new Error(`目录 ${data.projectName} 已存在`);
@@ -29,7 +29,6 @@ export async function generateProject(data: TemplateData): Promise<void> {
 
     // 自动安装依赖
     await installDependencies(projectPath);
-
   } catch (error) {
     // 如果生成失败，清理已创建的目录
     await fs.remove(projectPath);
@@ -40,13 +39,16 @@ export async function generateProject(data: TemplateData): Promise<void> {
 /**
  * 根据传输类型拷贝对应的模板目录
  */
-async function copyTemplateDirectory(transport: string, projectPath: string): Promise<void> {
+async function copyTemplateDirectory(
+  transport: string,
+  projectPath: string
+): Promise<void> {
   const templateName = `${transport}-template`;
   // 使用相对于源代码位置的模板路径
   const templatePath = path.join(__dirname, '../../templates', templateName);
-  
+
   // 检查模板目录是否存在
-  if (!await fs.pathExists(templatePath)) {
+  if (!(await fs.pathExists(templatePath))) {
     throw new Error(`模板目录不存在: ${templatePath}`);
   }
 
@@ -57,14 +59,20 @@ async function copyTemplateDirectory(transport: string, projectPath: string): Pr
 /**
  * 对拷贝后的所有文件进行变量替换
  */
-async function postProcessFiles(projectPath: string, context: TemplateContext): Promise<void> {
+async function postProcessFiles(
+  projectPath: string,
+  context: TemplateContext
+): Promise<void> {
   await processDirectoryRecursively(projectPath, context);
 }
 
 /**
  * 递归处理目录中的所有文件
  */
-async function processDirectoryRecursively(dirPath: string, context: TemplateContext): Promise<void> {
+async function processDirectoryRecursively(
+  dirPath: string,
+  context: TemplateContext
+): Promise<void> {
   const items = await fs.readdir(dirPath);
 
   for (const item of items) {
@@ -99,7 +107,15 @@ function shouldSkipDirectory(dirName: string): boolean {
  * 判断是否应该处理某个文件（进行变量替换）
  */
 function shouldProcessFile(fileName: string): boolean {
-  const textFileExtensions = ['.ts', '.js', '.json', '.md', '.txt', '.yml', '.yaml'];
+  const textFileExtensions = [
+    '.ts',
+    '.js',
+    '.json',
+    '.md',
+    '.txt',
+    '.yml',
+    '.yaml',
+  ];
   const ext = path.extname(fileName).toLowerCase();
   return textFileExtensions.includes(ext);
 }
@@ -107,28 +123,31 @@ function shouldProcessFile(fileName: string): boolean {
 /**
  * 处理单个文件，进行变量替换
  */
-async function processFile(filePath: string, context: TemplateContext): Promise<void> {
+async function processFile(
+  filePath: string,
+  context: TemplateContext
+): Promise<void> {
   try {
     // 读取文件内容
     const content = await fs.readFile(filePath, 'utf8');
-    
+
     // 使用模板引擎进行变量替换
     const processedContent = templateEngine.renderTemplate(content, context);
-    
+
     // 写回文件
     await fs.writeFile(filePath, processedContent, 'utf8');
   } catch (error) {
     console.warn(`处理文件 ${filePath} 时出错:`, error);
     // 不抛出错误，继续处理其他文件
   }
-} 
+}
 
 /**
  * 在项目目录中自动安装 npm 依赖
  */
 async function installDependencies(projectPath: string): Promise<void> {
   console.log('正在安装项目依赖...');
-  
+
   // 检测操作系统，Windows 下使用 npm.cmd
   const isWindows = process.platform === 'win32';
   const npmCommand = isWindows ? 'npm.cmd' : 'npm';
@@ -137,7 +156,7 @@ async function installDependencies(projectPath: string): Promise<void> {
     const installProcess = spawn(npmCommand, ['install'], {
       cwd: projectPath,
       stdio: ['inherit', 'pipe', 'pipe'],
-      shell: isWindows
+      shell: isWindows,
     });
 
     let output = '';
@@ -148,7 +167,11 @@ async function installDependencies(projectPath: string): Promise<void> {
       const chunk = data.toString();
       output += chunk;
       // 显示关键的安装信息
-      if (chunk.includes('added') || chunk.includes('found') || chunk.includes('audited')) {
+      if (
+        chunk.includes('added') ||
+        chunk.includes('found') ||
+        chunk.includes('audited')
+      ) {
         process.stdout.write(chunk);
       }
     });
@@ -171,8 +194,8 @@ async function installDependencies(projectPath: string): Promise<void> {
       } else {
         const error = new Error(
           `npm install 执行失败 (退出代码: ${code})\n` +
-          `错误详情: ${errorOutput || '未知错误'}\n` +
-          `建议: 请检查网络连接，或手动在项目目录中运行 'npm install'`
+            `错误详情: ${errorOutput || '未知错误'}\n` +
+            `建议: 请检查网络连接，或手动在项目目录中运行 'npm install'`
         );
         reject(error);
       }
@@ -182,9 +205,9 @@ async function installDependencies(projectPath: string): Promise<void> {
     installProcess.on('error', (error) => {
       const enhancedError = new Error(
         `无法执行 npm install: ${error.message}\n` +
-        `建议: 请确保已安装 Node.js 和 npm，或手动在项目目录中运行 'npm install'`
+          `建议: 请确保已安装 Node.js 和 npm，或手动在项目目录中运行 'npm install'`
       );
       reject(enhancedError);
     });
   });
-} 
+}

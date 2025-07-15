@@ -17,7 +17,8 @@ export class TemplateEngine {
   private encoding: BufferEncoding;
 
   constructor(options: TemplateOptions = {}) {
-    this.templatesDir = options.templatesDir || path.join(process.cwd(), 'templates');
+    this.templatesDir =
+      options.templatesDir || path.join(process.cwd(), 'templates');
     this.encoding = options.encoding || 'utf8';
   }
 
@@ -39,10 +40,13 @@ export class TemplateEngine {
   /**
    * 从文件加载并渲染模板
    */
-  public async renderTemplateFile(templatePath: string, context: TemplateContext): Promise<string> {
+  public async renderTemplateFile(
+    templatePath: string,
+    context: TemplateContext
+  ): Promise<string> {
     const fullPath = path.join(this.templatesDir, templatePath);
-    
-    if (!await fs.pathExists(fullPath)) {
+
+    if (!(await fs.pathExists(fullPath))) {
       throw new Error(`模板文件不存在: ${fullPath}`);
     }
 
@@ -64,16 +68,19 @@ export class TemplateEngine {
       // 添加格式化的变量
       transportDisplay: this.getTransportDisplay(data.transport),
       year: new Date().getFullYear(),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     return context;
   }
 
-  private processConditionals(content: string, context: TemplateContext): string {
+  private processConditionals(
+    content: string,
+    context: TemplateContext
+  ): string {
     // 处理 {{#if condition}}...{{/if}} 语法
     const ifRegex = /\{\{#if\s+(\w+)\}\}([\s\S]*?)\{\{\/if\}\}/g;
-    
+
     return content.replace(ifRegex, (match, condition, block) => {
       const conditionValue = context[condition];
       return conditionValue ? block : '';
@@ -83,7 +90,7 @@ export class TemplateEngine {
   private processVariables(content: string, context: TemplateContext): string {
     // 处理 {{variable}} 语法
     const variableRegex = /\{\{(\w+)\}\}/g;
-    
+
     return content.replace(variableRegex, (match, variable) => {
       const value = context[variable];
       if (value === undefined || value === null) {
@@ -98,11 +105,11 @@ export class TemplateEngine {
     const displays: Record<string, string> = {
       stdio: 'STDIO (标准输入输出)',
       httpStream: 'HTTP Stream',
-      sse: 'Server-Sent Events'
+      sse: 'Server-Sent Events',
     };
     return displays[transport] || transport;
   }
 }
 
 // 导出默认实例
-export const templateEngine = new TemplateEngine(); 
+export const templateEngine = new TemplateEngine();

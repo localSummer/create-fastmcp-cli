@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 
-
 interface ProjectNameInputProps {
   initialValue: string;
   onSubmit: (name: string) => void;
 }
 
-const ProjectNameInput: React.FC<ProjectNameInputProps> = ({ initialValue, onSubmit }) => {
+const ProjectNameInput: React.FC<ProjectNameInputProps> = ({
+  initialValue,
+  onSubmit,
+}) => {
   const [input, setInput] = useState(initialValue);
 
   useInput((inputChar, key) => {
@@ -19,20 +21,18 @@ const ProjectNameInput: React.FC<ProjectNameInputProps> = ({ initialValue, onSub
     }
 
     if (key.backspace || key.delete) {
-      setInput(prev => prev.slice(0, -1));
+      setInput((prev) => prev.slice(0, -1));
       return;
     }
 
     if (inputChar && /^[a-zA-Z0-9-_]$/.test(inputChar)) {
-      setInput(prev => prev + inputChar);
+      setInput((prev) => prev + inputChar);
     }
   });
 
   return (
     <Box flexDirection="column">
-      <Text color="cyan">
-        📁 请输入项目名称:
-      </Text>
+      <Text color="cyan">📁 请输入项目名称:</Text>
       <Box marginTop={1}>
         <Text color="gray">项目名称: </Text>
         <Text color="white" backgroundColor="blue">
@@ -49,4 +49,4 @@ const ProjectNameInput: React.FC<ProjectNameInputProps> = ({ initialValue, onSub
   );
 };
 
-export default ProjectNameInput; 
+export default ProjectNameInput;

@@ -8,29 +8,42 @@ interface PortInputProps {
   transport: TransportType;
 }
 
-const PortInput: React.FC<PortInputProps> = ({ initialValue, onSubmit, transport }) => {
+const PortInput: React.FC<PortInputProps> = ({
+  initialValue,
+  onSubmit,
+  transport,
+}) => {
   const [input, setInput] = useState(initialValue);
 
   useInput((inputChar, key) => {
     if (key.return) {
       const port = input.trim();
-      if (port && /^\d+$/.test(port) && parseInt(port) > 0 && parseInt(port) < 65536) {
+      if (
+        port &&
+        /^\d+$/.test(port) &&
+        parseInt(port) > 0 &&
+        parseInt(port) < 65536
+      ) {
         onSubmit(port);
       }
       return;
     }
 
     if (key.backspace || key.delete) {
-      setInput(prev => prev.slice(0, -1));
+      setInput((prev) => prev.slice(0, -1));
       return;
     }
 
     if (inputChar && /^\d$/.test(inputChar)) {
-      setInput(prev => prev + inputChar);
+      setInput((prev) => prev + inputChar);
     }
   });
 
-  const isValidPort = input && /^\d+$/.test(input) && parseInt(input) > 0 && parseInt(input) < 65536;
+  const isValidPort =
+    input &&
+    /^\d+$/.test(input) &&
+    parseInt(input) > 0 &&
+    parseInt(input) < 65536;
 
   return (
     <Box flexDirection="column">
@@ -39,7 +52,7 @@ const PortInput: React.FC<PortInputProps> = ({ initialValue, onSubmit, transport
       </Text>
       <Box marginTop={1}>
         <Text color="gray">端口号: </Text>
-        <Text color="white" backgroundColor={isValidPort ? "green" : "red"}>
+        <Text color="white" backgroundColor={isValidPort ? 'green' : 'red'}>
           {input}
           <Text color="white">█</Text>
         </Text>
@@ -51,9 +64,7 @@ const PortInput: React.FC<PortInputProps> = ({ initialValue, onSubmit, transport
       </Box>
       {!isValidPort && input && (
         <Box marginTop={1}>
-          <Text color="red">
-            ❌ 请输入有效的端口号 (1-65535)
-          </Text>
+          <Text color="red">❌ 请输入有效的端口号 (1-65535)</Text>
         </Box>
       )}
     </Box>
