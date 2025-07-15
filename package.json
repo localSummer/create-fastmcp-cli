@@ -5,6 +5,7 @@
   "type": "module",
   "main": "dist/index.js",
   "bin": {
+    "cnpm-create-fastmcp-cli": "./dist/index.js",
     "create-fastmcp-cli": "./dist/index.js"
   },
   "scripts": {
