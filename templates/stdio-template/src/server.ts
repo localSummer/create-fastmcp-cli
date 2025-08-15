@@ -1,10 +1,14 @@
 import { FastMCP } from 'fastmcp';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import fs from 'fs';
 import { registerTools } from './tools/index.js';
 import { registerResources } from './resources/index.js';
 import { registerPrompts } from './prompts/index.js';
 import logger from './logger.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * MCP 服务器类，用于 STDIO 传输

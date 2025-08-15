@@ -7,6 +7,7 @@ import CreateApp from './components/CreateApp.js';
 import chalk from 'chalk';
 import { generateProject } from './utils/projectGenerator.js';
 import { TransportType } from './types/index.js';
+import packageJson from '../package.json' with { type: 'json' };
 
 /**
  * 主程序入口点
@@ -21,7 +22,7 @@ const program = new Command();
 program
   .name('create-fastmcp-cli')
   .description('快速创建基于fastmcp TypeScript的MCP服务器项目')
-  .version("1.0.7")
+  .version(packageJson.version)
   .argument('[project-name]', '项目名称')
   .option('-t, --transport <type>', '传输类型 (stdio|httpStream|sse)', 'stdio')
   .option('-p, --port <port>', 'HTTP服务端口 (仅用于httpStream和sse)', '3000')
