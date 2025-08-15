@@ -23,12 +23,21 @@ The tool works by copying a template project based on the chosen transport type,
     - `TransportSelector.tsx`: Allows the user to choose the MCP transport type.
     - `PortInput.tsx`: Handles input for the HTTP port (for HTTP Stream and SSE).
     - `ProjectGenerator.tsx`: Triggers the actual project generation logic and displays progress/output.
-3.  **Project Generation Logic (`src/utils/projectGenerator.ts`)**:
+    - `ProgressIndicator.tsx`: Displays a progress indicator during project generation.
+3.  **Utilities (`src/utils/`)**:
+    - `projectGenerator.ts`: Contains the core project generation logic.
+    - `templateEngine.ts`: Handles template variable substitution and conditional rendering.
+    - `inputValidator.ts`: Validates user inputs like project name and port.
+    - `systemChecker.ts`: Checks system dependencies like Node.js, npm, and git.
+4.  **Types (`src/types/`)**:
+    - `index.ts`: Contains TypeScript interfaces and types used throughout the application.
+5.  **Project Generation Logic (`src/utils/projectGenerator.ts`)**:
     - Selects the appropriate template directory from `templates/` based on the chosen transport.
     - Copies the entire template directory to the target project path.
     - Recursively processes all text-based files in the copied project, performing variable substitution (e.g., `{{projectName}}`).
     - Automatically runs `npm install` in the new project directory.
-4.  **Templates (`templates/`)**: Separate directories containing complete, runnable FastMCP project structures for each transport type (stdio, httpStream, sse). These contain placeholder variables that are replaced during generation.
+    - Optionally initializes a git repository in the new project directory.
+6.  **Templates (`templates/`)**: Separate directories containing complete, runnable FastMCP project structures for each transport type (stdio, httpStream, sse). These contain placeholder variables that are replaced during generation.
 
 ## Development Conventions
 
@@ -54,4 +63,4 @@ The tool works by copying a template project based on the chosen transport type,
   - SSE: `npx @tools/create-fastmcp-cli my-sse-mcp --transport sse --port 9090`
 - **Non-interactive creation**:
   - `npx @tools/create-fastmcp-cli my-mcp-project --no-interactive`
-  - `npx @tools/create-fastmcp-cli my-web-mcp --transport httpStream --port 8080 --no-interactive`
+  - `npx @tools/create-fastmcp-cli my-web-mcp --transport httpStream --port 8080 --no-interactive --no-git`
