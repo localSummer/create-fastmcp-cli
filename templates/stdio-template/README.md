@@ -2,6 +2,8 @@
 
 {{description}}
 
+这是一个基于 [FastMCP](https://github.com/punkpeye/fastmcp) 框架构建的，使用 **STDIO** 传输协议的 MCP（Model Context Protocol）服务器模板。
+
 ## 传输类型
 
 - **STDIO (标准输入/输出)**：此模板使用标准输入/输出作为默认传输协议，非常适合命令行工具和本地脚本集成。
@@ -38,34 +40,49 @@ npm run build
 npm run start
 ```
 
+### 5. 查看工具定义
+
+启动一个交互式检查器，用于查看所有已注册的工具、资源和提示的定义。
+
+```bash
+npm run inspector
+```
+
 ## 功能模块
 
 此模板内置了三种类型的可扩展模块：工具、资源和提示。
 
 ### 工具 (Tools)
 
+工具是模型可以执行的具体操作。
+
 #### greet
 
-- **功能**：生成一条个性化的问候消息。
+- **描述**：生成一条个性化的问候消息。
 - **参数**：
-  - `name` (string, required): 要问候的人的姓名。
+  - `name` (string, 必需): 要问候的人的姓名。
 
 ### 资源 (Resources)
 
+资源是模型可以访问的数据或信息。
+
 #### read-file
 
-- **功能**：读取并返回指定文件的内容。
+- **描述**：读取并返回指定文件的内容。
+- **URI**: `file://{{path}}`
 - **参数**：
-  - `path` (string, required): 要读取的文件的路径。
+  - `path` (string, 必需): 要读取的文件的路径。
 
 ### 提示 (Prompts)
 
+提示是预定义的、可复用的模板，用于指导模型的生成行为。
+
 #### git-commit
 
-- **功能**：根据给定的语言和类型，生成一条标准的 Git 提交信息。
+- **描述**：根据代码更改生成 Git 提交消息。
 - **参数**：
-  - `language` (string, required): 生成内容所用的语言 (例如: '中文', 'English')。
-  - `type` (string, required): 提交的类型 (例如: 'feat', 'fix', 'docs')。
+  - `language` (string, 必需): 生成内容所用的语言 (例如: '中文', 'English')。
+  - `type` (string, 必需): 提交的类型 (例如: 'feat', 'fix', 'docs')。
 
 ## 项目结构
 
@@ -84,6 +101,8 @@ npm run start
 │   └── prompts/          # 提示定义目录
 │       ├── index.ts      # 注册所有提示
 │       └── git-commit.ts # “git-commit”提示的实现
+│   └── services/         # 服务模块目录
+│       └── api.ts        # API 服务模块
 ├── package.json
 ├── tsconfig.json
 └── README.md
@@ -135,4 +154,4 @@ export function registerTools(server: FastMCP): void {
 
 ## 基于 FastMCP
 
-此项目基于 [FastMCP](https://github.com/cnpm/fastmcp) 框架构建。FastMCP 是一个轻量级、高性能的元计算平台 (Meta Computing Platform)，专为快速构建、管理和部署 AI Agent 而设计。
+此项目基于 [FastMCP](https://github.com/punkpeye/fastmcp) 框架构建。

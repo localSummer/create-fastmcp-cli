@@ -2,7 +2,7 @@
 
 {{description}}
 
-这是一个基于 [FastMCP](https://github.com/punkpeye/fastmcp) 框架构建的，使用 **HTTP Stream** 传输协议的 MCP（Model-Controller-Prompt）服务器模板。
+这是一个基于 [FastMCP](https://github.com/punkpeye/fastmcp) 框架构建的，使用 **HTTP Stream** 传输协议的 MCP（Model-Context-Protocol）服务器模板。
 
 ## 传输类型
 
@@ -67,9 +67,11 @@ npm run inspector
 
 资源是模型可以访问的数据或信息。
 
-- **Application Logs**
-  - **描述**: 提供对应用程序日志的访问（当前为示例）。
-  - **URI**: `file:///logs/app.log`
+- **read-file**
+  - **描述**: 读取并返回指定文件的内容。
+  - **URI**: `file://{{path}}`
+  - **参数**:
+    - `path` (string, 必需): 要读取的文件的路径。
 
 ### 提示 (Prompts)
 
@@ -78,7 +80,8 @@ npm run inspector
 - **git-commit**
   - **描述**: 根据代码更改生成 Git 提交消息。
   - **参数**:
-    - `changes` (string, 必需): Git diff 内容或代码更改的描述。
+    - `language` (string, 必需): 生成内容所用的语言 (例如: '中文', 'English')。
+    - `type` (string, 必需): 提交的类型 (例如: 'feat', 'fix', 'docs')。
 
 
 ## 项目结构
@@ -98,7 +101,8 @@ npm run inspector
 │   ├── index.ts            # 应用程序主入口
 │   ├── logger.ts           # 日志记录器配置
 │   └── server.ts           # MCP 服务器的设置和配置
-├── .env.example            # 环境变量示例文件
+├── services/
+│   └── api.ts              # API 服务模块
 ├── package.json
 ├── tsconfig.json
 └── README.md
@@ -111,8 +115,8 @@ npm run inspector
     - **资源**: 在 `src/resources/` 目录下创建文件定义资源，并在 `src/resources/index.ts` 中注册。
     - **提示**: 在 `src/prompts/` 目录下创建文件定义提示，并在 `src/prompts/index.ts` 中注册。
 2.  **测试更改**: 使用 `npm run dev` 启动开发服务器来测试你的修改。
-3.  **配置端口**: 你可以通过在项目根目录创建 `.env` 文件并设置 `PORT` 变量来更改服务器端口。
+3.  **配置端口**: 默认端口为 {{port}}，你可以通过修改代码中的端口配置来更改服务器端口。
 
 ## 基于 FastMCP
 
-此项目基于 [FastMCP](https://github.com/punkpeye/fastmcp) 框架构建。FastMCP 旨在简化 AI 应用中模型、工具和数据之间交互的构建过程。 
+此项目基于 [FastMCP](https://github.com/punkpeye/fastmcp) 框架构建。

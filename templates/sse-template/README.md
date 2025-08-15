@@ -2,6 +2,8 @@
 
 {{description}}
 
+这是一个基于 [FastMCP](https://github.com/punkpeye/fastmcp) 框架构建的，使用 **Server-Sent Events (SSE)** 传输协议的 MCP（Model Context Protocol）服务器模板。
+
 ## 传输类型
 
 - **Server-Sent Events (SSE)**：此模板使用 SSE 作为传输协议，适用于需要从服务器到客户端进行单向实时通信和事件流的场景。
@@ -38,33 +40,49 @@ npm run build
 npm run start
 ```
 
+### 5. 查看工具定义
+
+启动一个交互式检查器，用于查看所有已注册的工具、资源和提示的定义。
+
+```bash
+npm run inspector
+```
+
 ## 功能模块
 
 此模板内置了三种类型的可扩展模块：工具、资源和提示。
 
 ### 工具 (Tools)
 
+工具是模型可以执行的具体操作。
+
 #### greet
 
-- **功能**：生成一条个性化的问候消息。
+- **描述**：生成一条个性化的问候消息。
 - **参数**：
-  - `name` (string, required): 要问候的人的姓名。
+  - `name` (string, 必需): 要问候的人的姓名。
 
 ### 资源 (Resources)
 
-#### Application Logs (示例)
+资源是模型可以访问的数据或信息。
 
-- **功能**：提供一个静态的应用程序日志内容作为资源示例。
-- **URI**: `file:///logs/app.log`
-- **说明**: 这是一个演示性质的资源，返回固定的文本内容。
+#### read-file
+
+- **描述**：读取并返回指定文件的内容。
+- **URI**: `file://{{path}}`
+- **参数**：
+  - `path` (string, 必需): 要读取的文件的路径。
 
 ### 提示 (Prompts)
 
+提示是预定义的、可复用的模板，用于指导模型的生成行为。
+
 #### git-commit
 
-- **功能**：根据代码变更生成一个用于撰写 Git 提交信息的提示。
+- **描述**：根据代码更改生成 Git 提交消息。
 - **参数**：
-  - `changes` (string, required): Git diff 或变更内容的描述。
+  - `language` (string, 必需): 生成内容所用的语言 (例如: '中文', 'English')。
+  - `type` (string, 必需): 提交的类型 (例如: 'feat', 'fix', 'docs')。
 
 ## 项目结构
 
@@ -76,13 +94,15 @@ npm run start
 │   ├── logger.ts         # 日志工具
 │   ├── tools/            # 工具定义目录
 │   │   ├── index.ts      # 注册所有工具
-│   │   └── greet.ts      # “greet”工具的实现
+│   │   └── greet.ts      # "greet"工具的实现
 │   ├── resources/        # 资源定义目录
 │   │   ├── index.ts      # 注册所有资源
-│   │   └── read-file.ts  # 示例资源的实现
-│   └── prompts/          # 提示定义目录
-│       ├── index.ts      # 注册所有提示
-│       └── git-commit.ts # “git-commit”提示的实现
+│   │   └── read-file.ts  # "read-file"资源的实现
+│   ├── prompts/          # 提示定义目录
+│   │   ├── index.ts      # 注册所有提示
+│   │   └── git-commit.ts # "git-commit"提示的实现
+│   └── services/         # 服务模块目录
+│       └── api.ts        # API 服务模块
 ├── package.json
 ├── tsconfig.json
 └── README.md
@@ -92,13 +112,14 @@ npm run start
 
 您可以轻松地为项目添加新的工具、资源或提示。
 
-### 1. 创建模块文件
+1.  **添加新功能**:
+    - **工具**: 在 `src/tools/` 目录下创建一个新文件，定义你的工具，然后在 `src/tools/index.ts` 中注册它。
+    - **资源**: 在 `src/resources/` 目录下创建文件定义资源，并在 `src/resources/index.ts` 中注册。
+    - **提示**: 在 `src/prompts/` 目录下创建文件定义提示，并在 `src/prompts/index.ts` 中注册。
+2.  **测试更改**: 使用 `npm run dev` 启动开发服务器来测试你的修改。
+3.  **配置端口**: 默认端口为 {{port}}，你可以通过修改代码中的端口配置来更改服务器端口。
 
--   **工具**: 在 `src/tools/` 目录下创建一个新文件 (例如 `myTool.ts`)。
--   **资源**: 在 `src/resources/` 目录下创建一个新文件 (例如 `myResource.ts`)。
--   **提示**: 在 `src/prompts/` 目录下创建一个新文件 (例如 `myPrompt.ts`)。
-
-### 2. 实现并注册模块
+### 添加模块示例
 
 在您创建的文件中，定义模块的功能并导出一个注册函数。
 
@@ -115,9 +136,7 @@ export function registerMyTool(server: FastMCP): void {
 }
 ```
 
-### 3. 在主文件中引入
-
-打开相应模块的 `index.ts` 文件 (例如 `src/tools/index.ts`)，导入并调用您的注册函数。
+然后在相应模块的 `index.ts` 文件中导入并调用您的注册函数。
 
 ```typescript
 // 示例: src/tools/index.ts
@@ -134,4 +153,4 @@ export function registerTools(server: FastMCP): void {
 
 ## 基于 FastMCP
 
-此项目基于 [FastMCP](https://github.com/cnpm/fastmcp) 框架构建。FastMCP 是一个轻量级、高性能的元计算平台 (Meta Computing Platform)，专为快速构建、管理和部署 AI Agent 而设计。 
+此项目基于 [FastMCP](https://github.com/punkpeye/fastmcp) 框架构建。
