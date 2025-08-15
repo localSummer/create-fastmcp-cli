@@ -128,6 +128,10 @@ npm start
 - [TypeScript](https://www.typescriptlang.org/) - 类型安全
 - [Commander.js](https://github.com/tj/commander.js/) - 命令行参数解析
 
+## 代码仓库
+
+[http://gitcode.tongdao.cn/dev8/mcp/cnpm-create-fastmcp-cli](http://gitcode.tongdao.cn/dev8/mcp/cnpm-create-fastmcp-cli)
+
 ## 许可证
 
 MIT 
