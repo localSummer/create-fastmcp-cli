@@ -16,6 +16,7 @@ const CreateApp: React.FC<CreateAppProps> = ({
   projectName: initialProjectName,
   transport: initialTransport = 'stdio',
   port: initialPort = '3000',
+  initGit = true,
 }) => {
   /**
    * 当前步骤状态
@@ -110,6 +111,7 @@ const CreateApp: React.FC<CreateAppProps> = ({
           projectName={projectName}
           transport={transport}
           port={port}
+          initGit={initGit}
           onComplete={handleGenerationComplete}
         />
       )}

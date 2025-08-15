@@ -14,6 +14,8 @@ interface ProjectGeneratorProps {
   transport: TransportType;
   /** 端口号 */
   port: string;
+  /** 是否初始化 git 仓库 */
+  initGit: boolean;
   /** 项目生成完成时的回调函数 */
   onComplete: () => void;
 }
@@ -29,6 +31,7 @@ const ProjectGenerator: React.FC<ProjectGeneratorProps> = ({
   projectName,
   transport,
   port,
+  initGit,
   onComplete,
 }) => {
   /** 当前状态文本 */
@@ -54,6 +57,7 @@ const ProjectGenerator: React.FC<ProjectGeneratorProps> = ({
           transport,
           port,
           description: `基于 fastmcp 的 ${transport} MCP 服务器项目`,
+          initGit,
         });
 
         setStatus('安装依赖...');
@@ -71,7 +75,7 @@ const ProjectGenerator: React.FC<ProjectGeneratorProps> = ({
     };
 
     generate();
-  }, [projectName, transport, port, onComplete]);
+  }, [projectName, transport, port, initGit, onComplete]);
 
   // 如果有错误，显示错误信息
   if (error) {

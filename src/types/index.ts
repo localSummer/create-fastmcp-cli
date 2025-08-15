@@ -18,6 +18,8 @@ export interface ProjectConfig {
   port?: string;
   /** 是否启用交互模式 */
   interactive: boolean;
+  /** 是否初始化 git 仓库 */
+  initGit: boolean;
 }
 
 /**
@@ -34,6 +36,8 @@ export interface CreateAppProps {
   port?: string;
   /** 是否启用交互模式 */
   interactive: boolean;
+  /** 是否初始化 git 仓库 */
+  initGit: boolean;
 }
 
 /**
@@ -50,4 +54,6 @@ export interface TemplateData {
   port: string;
   /** 项目描述 */
   description: string;
+  /** 是否初始化 git 仓库 */
+  initGit: boolean;
 } 

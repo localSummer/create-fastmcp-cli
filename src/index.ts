@@ -27,6 +27,7 @@ program
   .option('-t, --transport <type>', '传输类型 (stdio|httpStream|sse)', 'stdio')
   .option('-p, --port <port>', 'HTTP服务端口 (仅用于httpStream和sse)', '3000')
   .option('--no-interactive', '非交互模式')
+  .option('--no-git', '跳过 git 仓库初始化')
   .action(async (projectName, options) => {
     // 验证传输类型
     const validTransports: TransportType[] = ['stdio', 'httpStream', 'sse'];
@@ -59,6 +60,7 @@ program
           transport: options.transport,
           port: options.transport === 'stdio' ? '3000' : options.port,
           description: `基于 fastmcp 的 ${options.transport} MCP 服务器项目`,
+          initGit: options.git !== false,
         });
         console.log(chalk.green('✅ 项目创建完成！'));
         console.log(chalk.gray(`项目已创建在 ./${projectName} 目录中`));
@@ -79,6 +81,7 @@ program
           transport: options.transport,
           port: options.port,
           interactive: options.interactive,
+          initGit: options.git !== false,
         })
       );
 

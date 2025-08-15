@@ -36,6 +36,16 @@ export async function generateProject(data: TemplateData): Promise<void> {
 
     // 自动安装依赖
     await installDependencies(projectPath);
+
+    // 初始化 git 仓库（如果启用）
+    if (data.initGit) {
+      try {
+        await initializeGitRepository(projectPath);
+      } catch (gitError) {
+        // git 初始化失败不影响项目生成，只显示警告
+        console.warn('⚠️ Git 初始化失败，但项目创建成功：', gitError instanceof Error ? gitError.message : '未知错误');
+      }
+    }
   } catch (error) {
     // 如果生成失败，清理已创建的目录
     await fs.remove(projectPath);
@@ -199,6 +209,78 @@ async function processFile(
     console.warn(`处理文件 ${filePath} 时出错:`, error);
     // 不抛出错误，继续处理其他文件
   }
+}
+
+/**
+ * 在项目目录中初始化 git 仓库
+ * @param {string} projectPath - 项目路径
+ * @returns {Promise<void>} 无返回值的 Promise
+ * @throws {Error} 如果 git init 执行失败
+ */
+async function initializeGitRepository(projectPath: string): Promise<void> {
+  console.log('正在初始化 Git 仓库...');
+
+  // 检测操作系统，Windows 下使用 git.exe
+  const isWindows = process.platform === 'win32';
+  const gitCommand = isWindows ? 'git.exe' : 'git';
+
+  return new Promise((resolve, reject) => {
+    const gitProcess = spawn(gitCommand, ['init'], {
+      cwd: projectPath,
+      stdio: ['inherit', 'pipe', 'pipe'],
+      shell: isWindows,
+    });
+
+    let output = '';
+    let errorOutput = '';
+
+    // 监听标准输出
+    gitProcess.stdout?.on('data', (data) => {
+      const chunk = data.toString();
+      output += chunk;
+      // 显示 git init 输出
+      process.stdout.write(chunk);
+    });
+
+    // 监听错误输出
+    gitProcess.stderr?.on('data', (data) => {
+      const chunk = data.toString();
+      errorOutput += chunk;
+      // git init 的成功信息可能输出到 stderr，只显示实际错误
+      if (chunk.includes('error') || chunk.includes('fatal')) {
+        process.stderr.write(chunk);
+      } else {
+        // git init 的正常信息也显示出来
+        process.stdout.write(chunk);
+      }
+    });
+
+    // 监听进程结束
+    gitProcess.on('close', (code) => {
+      if (code === 0) {
+        console.log('✅ Git 仓库初始化完成！');
+        resolve();
+      } else {
+        const error = new Error(
+          `git init 执行失败 (退出代码: ${code})
+` +
+            `错误详情: ${errorOutput || '未知错误'}
+` +
+            `建议: 请检查是否已安装 Git，或手动在项目目录中运行 'git init'`
+        );
+        reject(error);
+      }
+    });
+
+    // 监听进程错误
+    gitProcess.on('error', (error) => {
+      const enhancedError = new Error(
+        `无法执行 git init: ${error.message}
+` + `建议: 请确保已安装 Git，或手动在项目目录中运行 'git init'`
+      );
+      reject(enhancedError);
+    });
+  });
 }
 
 /**
