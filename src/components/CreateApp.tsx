@@ -6,22 +6,47 @@ import PortInput from './PortInput.js';
 import ProjectGenerator from './ProjectGenerator.js';
 import { CreateAppProps, TransportType } from '../types/index.js';
 
+/**
+ * CreateApp 组件
+ * 这是应用程序的主要入口点，负责管理整个项目创建流程
+ * @param {CreateAppProps} props - 组件属性
+ * @returns {ReactElement} React 元素
+ */
 const CreateApp: React.FC<CreateAppProps> = ({
   projectName: initialProjectName,
   transport: initialTransport = 'stdio',
   port: initialPort = '3000',
 }) => {
+  /**
+   * 当前步骤状态
+   * 0: 输入项目名称
+   * 1: 选择传输类型
+   * 2: 输入端口号 (仅用于 httpStream 和 sse)
+   * 3: 生成项目
+   */
   const [step, setStep] = useState(initialProjectName ? 1 : 0); // 如果已有项目名，从传输类型选择开始
+  /** 项目名称状态 */
   const [projectName, setProjectName] = useState(initialProjectName || '');
+  /** 传输类型状态 */
   const [transport, setTransport] = useState<TransportType>(initialTransport);
+  /** 端口号状态 */
   const [port, setPort] = useState(initialPort);
+  /** 获取 exit 函数用于退出应用 */
   const { exit } = useApp();
 
+  /**
+   * 处理项目名称提交事件
+   * @param {string} name - 用户输入的项目名称
+   */
   const handleProjectNameSubmit = (name: string) => {
     setProjectName(name);
     setStep(1);
   };
 
+  /**
+   * 处理传输类型选择事件
+   * @param {TransportType} selectedTransport - 用户选择的传输类型
+   */
   const handleTransportSelect = (selectedTransport: TransportType) => {
     setTransport(selectedTransport);
     if (selectedTransport === 'stdio') {
@@ -31,11 +56,19 @@ const CreateApp: React.FC<CreateAppProps> = ({
     }
   };
 
+  /**
+   * 处理端口号提交事件
+   * @param {string} selectedPort - 用户输入的端口号
+   */
   const handlePortSubmit = (selectedPort: string) => {
     setPort(selectedPort);
     setStep(3);
   };
 
+  /**
+   * 处理项目生成完成事件
+   * 在项目生成完成后延时退出应用
+   */
   const handleGenerationComplete = () => {
     setTimeout(() => {
       exit();

@@ -3,23 +3,45 @@ import { Box, Text } from 'ink';
 import { generateProject } from '../utils/projectGenerator.js';
 import { TransportType } from '../types/index.js';
 
+/**
+ * ProjectGenerator 组件的属性接口
+ * @interface ProjectGeneratorProps
+ */
 interface ProjectGeneratorProps {
+  /** 项目名称 */
   projectName: string;
+  /** 传输类型 */
   transport: TransportType;
+  /** 端口号 */
   port: string;
+  /** 项目生成完成时的回调函数 */
   onComplete: () => void;
 }
 
+/**
+ * ProjectGenerator 组件
+ * 负责执行项目生成的核心逻辑
+ * 包括创建目录、生成文件、安装依赖等步骤
+ * @param {ProjectGeneratorProps} props - 组件属性
+ * @returns {ReactElement} React 元素
+ */
 const ProjectGenerator: React.FC<ProjectGeneratorProps> = ({
   projectName,
   transport,
   port,
   onComplete,
 }) => {
+  /** 当前状态文本 */
   const [status, setStatus] = useState('准备中...');
+  /** 项目是否生成完成 */
   const [isComplete, setIsComplete] = useState(false);
+  /** 错误信息 */
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * useEffect 钩子
+   * 在组件挂载时执行项目生成逻辑
+   */
   useEffect(() => {
     const generate = async () => {
       try {
@@ -51,6 +73,7 @@ const ProjectGenerator: React.FC<ProjectGeneratorProps> = ({
     generate();
   }, [projectName, transport, port, onComplete]);
 
+  // 如果有错误，显示错误信息
   if (error) {
     return (
       <Box flexDirection="column">

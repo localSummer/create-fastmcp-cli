@@ -8,8 +8,16 @@ import chalk from 'chalk';
 import { generateProject } from './utils/projectGenerator.js';
 import { TransportType } from './types/index.js';
 
+/**
+ * 主程序入口点
+ * 使用 Commander.js 解析命令行参数并执行相应操作
+ */
 const program = new Command();
 
+/**
+ * 配置 Commander.js 程序
+ * 设置程序名称、描述、版本以及命令行参数和选项
+ */
 program
   .name('create-fastmcp-cli')
   .description('快速创建基于fastmcp TypeScript的MCP服务器项目')
@@ -82,4 +90,7 @@ program
     }
   });
 
+/**
+ * 解析命令行参数并执行程序
+ */
 program.parse();

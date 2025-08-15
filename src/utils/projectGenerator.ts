@@ -9,6 +9,13 @@ import { templateEngine, TemplateContext } from './templateEngine.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+/**
+ * 生成项目的核心函数
+ * 负责创建项目目录、拷贝模板文件、处理变量替换和安装依赖
+ * @param {TemplateData} data - 模板数据，包含项目名称、传输类型、端口和描述
+ * @returns {Promise<void>} 无返回值的 Promise
+ * @throws {Error} 如果项目目录已存在或生成过程中发生错误
+ */
 export async function generateProject(data: TemplateData): Promise<void> {
   const projectPath = path.join(process.cwd(), data.projectName);
 
@@ -38,6 +45,10 @@ export async function generateProject(data: TemplateData): Promise<void> {
 
 /**
  * 根据传输类型拷贝对应的模板目录
+ * @param {string} transport - 传输类型 ('stdio', 'httpStream', 'sse')
+ * @param {string} projectPath - 项目路径
+ * @returns {Promise<void>} 无返回值的 Promise
+ * @throws {Error} 如果模板目录不存在
  */
 async function copyTemplateDirectory(
   transport: string,
@@ -58,6 +69,9 @@ async function copyTemplateDirectory(
 
 /**
  * 对拷贝后的所有文件进行变量替换
+ * @param {string} projectPath - 项目路径
+ * @param {TemplateContext} context - 模板上下文
+ * @returns {Promise<void>} 无返回值的 Promise
  */
 async function postProcessFiles(
   projectPath: string,
@@ -68,6 +82,9 @@ async function postProcessFiles(
 
 /**
  * 递归处理目录中的所有文件
+ * @param {string} dirPath - 要处理的目录路径
+ * @param {TemplateContext} context - 模板上下文
+ * @returns {Promise<void>} 无返回值的 Promise
  */
 async function processDirectoryRecursively(
   dirPath: string,
@@ -97,6 +114,8 @@ async function processDirectoryRecursively(
 
 /**
  * 判断是否应该跳过某个目录
+ * @param {string} dirName - 目录名称
+ * @returns {boolean} 如果应该跳过则返回 true，否则返回 false
  */
 function shouldSkipDirectory(dirName: string): boolean {
   const skipDirs = ['node_modules', '.git', 'dist', '.vscode'];
@@ -105,6 +124,8 @@ function shouldSkipDirectory(dirName: string): boolean {
 
 /**
  * 判断是否应该处理某个文件（进行变量替换）
+ * @param {string} fileName - 文件名
+ * @returns {boolean} 如果应该处理则返回 true，否则返回 false
  */
 function shouldProcessFile(fileName: string): boolean {
   const textFileExtensions = [
@@ -122,6 +143,9 @@ function shouldProcessFile(fileName: string): boolean {
 
 /**
  * 处理单个文件，进行变量替换
+ * @param {string} filePath - 文件路径
+ * @param {TemplateContext} context - 模板上下文
+ * @returns {Promise<void>} 无返回值的 Promise
  */
 async function processFile(
   filePath: string,
@@ -144,6 +168,9 @@ async function processFile(
 
 /**
  * 在项目目录中自动安装 npm 依赖
+ * @param {string} projectPath - 项目路径
+ * @returns {Promise<void>} 无返回值的 Promise
+ * @throws {Error} 如果 npm install 执行失败
  */
 async function installDependencies(projectPath: string): Promise<void> {
   console.log('正在安装项目依赖...');
@@ -193,8 +220,10 @@ async function installDependencies(projectPath: string): Promise<void> {
         resolve();
       } else {
         const error = new Error(
-          `npm install 执行失败 (退出代码: ${code})\n` +
-            `错误详情: ${errorOutput || '未知错误'}\n` +
+          `npm install 执行失败 (退出代码: ${code})
+` +
+            `错误详情: ${errorOutput || '未知错误'}
+` +
             `建议: 请检查网络连接，或手动在项目目录中运行 'npm install'`
         );
         reject(error);
@@ -204,8 +233,8 @@ async function installDependencies(projectPath: string): Promise<void> {
     // 监听进程错误
     installProcess.on('error', (error) => {
       const enhancedError = new Error(
-        `无法执行 npm install: ${error.message}\n` +
-          `建议: 请确保已安装 Node.js 和 npm，或手动在项目目录中运行 'npm install'`
+        `无法执行 npm install: ${error.message}
+` + `建议: 请确保已安装 Node.js 和 npm，或手动在项目目录中运行 'npm install'`
       );
       reject(enhancedError);
     });
