@@ -9,6 +9,8 @@
 - 🎨 使用 [Ink](https://github.com/vadimdemedes/ink) 提供美观的交互式界面
 - 📦 自动生成完整的项目结构和配置
 - 🛠️ 包含示例工具和详细文档
+- 🔧 自动初始化 Git 仓库并安装依赖
+- 📋 生成完整的 .gitignore 文件
 
 ## 安装
 
@@ -50,6 +52,9 @@ npx @tools/create-fastmcp-cli my-web-mcp --transport httpStream --port 8080 --no
 
 # 非交互式创建 SSE 项目  
 npx @tools/create-fastmcp-cli my-sse-mcp --transport sse --port 9090 --no-interactive
+
+# 跳过 git 仓库初始化
+npx @tools/create-fastmcp-cli my-mcp-project --no-git --no-interactive
 ```
 
 ## 命令行选项
@@ -58,6 +63,7 @@ npx @tools/create-fastmcp-cli my-sse-mcp --transport sse --port 9090 --no-intera
 - `-t, --transport <type>` - 传输类型 (stdio|httpStream|sse，默认: stdio)
 - `-p, --port <port>` - HTTP 服务端口 (仅用于 httpStream 和 sse，默认: 3000)
 - `--no-interactive` - 非交互模式
+- `--no-git` - 跳过 git 仓库初始化
 
 ## MCP 传输类型
 
@@ -86,13 +92,14 @@ my-project/
 │   ├── logger.ts         # 日志工具
 │   ├── tools/            # 工具定义目录
 │   │   ├── index.ts      # 注册所有工具
-│   │   └── greet.ts      # “greet”工具的实现
+│   │   └── greet.ts      # "greet"工具的实现
 │   ├── resources/        # 资源定义目录
 │   │   ├── index.ts      # 注册所有资源
-│   │   └── read-file.ts  # “read-file”资源的实现
+│   │   └── read-file.ts  # "read-file"资源的实现
 │   └── prompts/          # 提示定义目录
 │       ├── index.ts      # 注册所有提示
-│       └── git-commit.ts # “git-commit”提示的实现
+│       └── git-commit.ts # "git-commit"提示的实现
+├── .gitignore            # Git 忽略文件配置
 ├── package.json
 ├── tsconfig.json
 └── README.md
