@@ -4,52 +4,141 @@ import { fileURLToPath } from 'url';
 import { spawn } from 'child_process';
 import { TemplateData } from '../types/index.js';
 import { templateEngine, TemplateContext } from './templateEngine.js';
+import chalk from 'chalk';
 
 // 获取当前模块的目录路径
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /**
- * 生成项目的核心函数
+ * 项目生成步骤枚举
+ */
+export enum GenerationStep {
+  VALIDATION = 'validation',
+  COPY_TEMPLATE = 'copy_template', 
+  PROCESS_FILES = 'process_files',
+  INSTALL_DEPENDENCIES = 'install_dependencies',
+  INIT_GIT = 'init_git',
+  CLEANUP = 'cleanup'
+}
+
+/**
+ * 项目生成状态回调接口
+ */
+export interface GenerationProgress {
+  step: GenerationStep;
+  message: string;
+  completed: boolean;
+  error?: string;
+}
+
+/**
+ * 项目生成选项接口
+ */
+export interface GenerationOptions {
+  /** 模板数据 */
+  data: TemplateData;
+  /** 进度回调函数 */
+  onProgress?: (progress: GenerationProgress) => void;
+  /** 是否在失败时自动清理 */
+  autoCleanup?: boolean;
+}
+
+/**
+ * 生成项目的核心函数（改进版）
  * 负责创建项目目录、拷贝模板文件、处理变量替换和安装依赖
- * @param {TemplateData} data - 模板数据，包含项目名称、传输类型、端口和描述
+ * @param {GenerationOptions} options - 生成选项
  * @returns {Promise<void>} 无返回值的 Promise
  * @throws {Error} 如果项目目录已存在或生成过程中发生错误
  */
-export async function generateProject(data: TemplateData): Promise<void> {
+export async function generateProjectWithProgress(options: GenerationOptions): Promise<void> {
+  const { data, onProgress, autoCleanup = true } = options;
   const projectPath = path.join(process.cwd(), data.projectName);
+  let currentStep: GenerationStep = GenerationStep.VALIDATION;
 
-  // 确保项目目录不存在
-  if (await fs.pathExists(projectPath)) {
-    throw new Error(`目录 ${data.projectName} 已存在`);
-  }
-
-  // 构建模板上下文
-  const context = templateEngine.buildContext(data);
+  const reportProgress = (step: GenerationStep, message: string, completed: boolean = false, error?: string) => {
+    currentStep = step;
+    onProgress?.({ step, message, completed, error });
+  };
 
   try {
-    // 根据传输类型选择模板目录并拷贝
+    // 步骤1: 验证
+    reportProgress(GenerationStep.VALIDATION, '验证项目配置...');
+    
+    if (await fs.pathExists(projectPath)) {
+      throw new Error(`目录 ${data.projectName} 已存在`);
+    }
+    
+    reportProgress(GenerationStep.VALIDATION, '项目配置验证完成', true);
+
+    // 构建模板上下文
+    const context = templateEngine.buildContext(data);
+
+    // 步骤2: 拷贝模板
+    reportProgress(GenerationStep.COPY_TEMPLATE, '正在拷贝模板文件...');
     await copyTemplateDirectory(data.transport, projectPath);
+    reportProgress(GenerationStep.COPY_TEMPLATE, '模板文件拷贝完成', true);
 
-    // 对拷贝后的文件进行变量替换
+    // 步骤3: 处理文件
+    reportProgress(GenerationStep.PROCESS_FILES, '正在处理模板变量...');
     await postProcessFiles(projectPath, context);
+    reportProgress(GenerationStep.PROCESS_FILES, '模板变量处理完成', true);
 
-    // 自动安装依赖
+    // 步骤4: 安装依赖
+    reportProgress(GenerationStep.INSTALL_DEPENDENCIES, '正在安装项目依赖...');
     await installDependencies(projectPath);
+    reportProgress(GenerationStep.INSTALL_DEPENDENCIES, '项目依赖安装完成', true);
 
-    // 初始化 git 仓库（如果启用）
+    // 步骤5: 初始化 Git（可选）
     if (data.initGit) {
+      reportProgress(GenerationStep.INIT_GIT, '正在初始化 Git 仓库...');
       try {
         await initializeGitRepository(projectPath);
+        reportProgress(GenerationStep.INIT_GIT, 'Git 仓库初始化完成', true);
       } catch (gitError) {
-        // git 初始化失败不影响项目生成，只显示警告
-        console.warn('⚠️ Git 初始化失败，但项目创建成功：', gitError instanceof Error ? gitError.message : '未知错误');
+        const errorMsg = gitError instanceof Error ? gitError.message : '未知错误';
+        reportProgress(GenerationStep.INIT_GIT, 'Git 初始化失败，但项目创建成功', true, errorMsg);
+        console.warn(chalk.yellow('⚠️ Git 初始化失败，但项目创建成功：'), errorMsg);
       }
     }
+
   } catch (error) {
-    // 如果生成失败，清理已创建的目录
-    await fs.remove(projectPath);
+    const errorMsg = error instanceof Error ? error.message : '未知错误';
+    reportProgress(currentStep, `生成失败: ${errorMsg}`, false, errorMsg);
+    
+    if (autoCleanup) {
+      reportProgress(GenerationStep.CLEANUP, '正在清理失败的项目文件...');
+      await safeCleanup(projectPath);
+      reportProgress(GenerationStep.CLEANUP, '清理完成', true);
+    }
+    
     throw error;
+  }
+}
+
+/**
+ * 生成项目的核心函数（保持向后兼容）
+ * @param {TemplateData} data - 模板数据
+ * @returns {Promise<void>} 无返回值的 Promise
+ */
+export async function generateProject(data: TemplateData): Promise<void> {
+  return generateProjectWithProgress({ data });
+}
+
+/**
+ * 安全清理项目目录
+ * @param {string} projectPath - 项目路径
+ */
+async function safeCleanup(projectPath: string): Promise<void> {
+  try {
+    if (await fs.pathExists(projectPath)) {
+      console.log(chalk.yellow('🧹 正在清理失败的项目文件...'));
+      await fs.remove(projectPath);
+      console.log(chalk.green('✅ 清理完成'));
+    }
+  } catch (cleanupError) {
+    console.warn(chalk.yellow('⚠️ 清理失败，请手动删除目录:'), projectPath);
+    console.warn('错误详情:', cleanupError);
   }
 }
 
@@ -212,7 +301,8 @@ async function processFile(
     // 写回文件
     await fs.writeFile(filePath, processedContent, 'utf8');
   } catch (error) {
-    console.warn(`处理文件 ${filePath} 时出错:`, error);
+    const errorMsg = error instanceof Error ? error.message : '未知错误';
+    console.warn(chalk.yellow(`⚠️ 处理文件 ${filePath} 时出错:`), errorMsg);
     // 不抛出错误，继续处理其他文件
   }
 }

@@ -5,7 +5,9 @@ import { render } from 'ink';
 import React from 'react';
 import CreateApp from './components/CreateApp.js';
 import chalk from 'chalk';
-import { generateProject } from './utils/projectGenerator.js';
+import { generateProjectWithProgress } from './utils/projectGenerator.js';
+import { systemChecker } from './utils/systemChecker.js';
+import { inputValidator } from './utils/inputValidator.js';
 import { TransportType } from './types/index.js';
 import packageJson from '../package.json' with { type: 'json' };
 
@@ -52,16 +54,56 @@ program
     // 如果是非交互模式且提供了项目名称，直接生成项目而不使用交互式界面
     if (options.interactive === false && projectName) {
       console.log(chalk.blue('🚀 FastMCP CLI 项目生成器'));
-      console.log(chalk.gray('正在创建项目...\n'));
+      console.log(chalk.gray('正在初始化...\n'));
 
       try {
-        await generateProject({
-          projectName,
-          transport: options.transport,
-          port: options.transport === 'stdio' ? '3000' : options.port,
-          description: `基于 fastmcp 的 ${options.transport} MCP 服务器项目`,
-          initGit: options.git !== false,
+        // 验证项目名称
+        const nameValidation = inputValidator.validateProjectName(projectName);
+        if (!nameValidation.isValid) {
+          console.error(chalk.red('项目名称验证失败:'), nameValidation.error);
+          if (nameValidation.suggestion) {
+            console.log(chalk.cyan('建议:'), nameValidation.suggestion);
+          }
+          process.exit(1);
+        }
+        
+        // 验证端口号（如果需要）
+        if (options.transport !== 'stdio') {
+          const portValidation = inputValidator.validatePort(options.port);
+          if (!portValidation.isValid) {
+            console.error(chalk.red('端口号验证失败:'), portValidation.error);
+            process.exit(1);
+          }
+          if (portValidation.warning) {
+            console.warn(chalk.yellow('警告:'), portValidation.warning);
+          }
+        }
+        
+        // 系统检查
+        const systemCheckResults = await systemChecker.performSystemCheck(options.git !== false);
+        if (!systemChecker.hasAllRequiredDependencies(systemCheckResults)) {
+          console.error(chalk.red('系统检查失败，请安装缺失的依赖后重试。'));
+          process.exit(1);
+        }
+        
+        console.log(chalk.gray('正在创建项目...\n'));
+        
+        await generateProjectWithProgress({
+          data: {
+            projectName,
+            transport: options.transport,
+            port: options.transport === 'stdio' ? '3000' : options.port,
+            description: `基于 fastmcp 的 ${options.transport} MCP 服务器项目`,
+            initGit: options.git !== false,
+          },
+          onProgress: (progress) => {
+            console.log(chalk.cyan(`⏳ ${progress.message}`));
+            if (progress.error) {
+              console.warn(chalk.yellow(`⚠️  ${progress.error}`));
+            }
+          },
         });
+        
         console.log(chalk.green('✅ 项目创建完成！'));
         console.log(chalk.gray(`项目已创建在 ./${projectName} 目录中`));
         console.log(chalk.gray('运行以下命令开始开发:'));
