@@ -37,6 +37,21 @@ npx @tools/create-fastmcp-cli my-web-mcp --transport httpStream --port 8080
 npx @tools/create-fastmcp-cli my-sse-mcp --transport sse --port 9090
 ```
 
+### 非交互模式
+
+使用 `--no-interactive` 参数可以跳过交互式界面，直接生成项目：
+
+```bash
+# 非交互式创建 STDIO 项目
+npx @tools/create-fastmcp-cli my-mcp-project --no-interactive
+
+# 非交互式创建 HTTP Stream 项目
+npx @tools/create-fastmcp-cli my-web-mcp --transport httpStream --port 8080 --no-interactive
+
+# 非交互式创建 SSE 项目  
+npx @tools/create-fastmcp-cli my-sse-mcp --transport sse --port 9090 --no-interactive
+```
+
 ## 命令行选项
 
 - `[project-name]` - 项目名称

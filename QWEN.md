@@ -14,7 +14,9 @@ The tool works by copying a template project based on the chosen transport type,
 
 ## Core Architecture
 
-1.  **CLI Entry Point (`src/index.ts`)**: Parses command-line arguments using Commander.js. It determines if the tool should run in interactive mode or use provided flags directly. It then renders the main Ink/React component (`CreateApp`).
+1.  **CLI Entry Point (`src/index.ts`)**: Parses command-line arguments using Commander.js. It determines if the tool should run in interactive mode or use provided flags directly. It handles validation of arguments and then either:
+    - Renders the main Ink/React component (`CreateApp`) for interactive mode
+    - Directly generates the project for non-interactive mode
 2.  **Interactive UI (`src/components/`)**: A series of Ink/React components manage the steps of project creation:
     - `CreateApp.tsx`: The main application state machine, controlling which step (project name, transport type, port, generation) is displayed.
     - `ProjectNameInput.tsx`: Handles input for the project name.
@@ -50,3 +52,6 @@ The tool works by copying a template project based on the chosen transport type,
   - STDIO: `npx @tools/create-fastmcp-cli my-mcp-project`
   - HTTP Stream: `npx @tools/create-fastmcp-cli my-web-mcp --transport httpStream --port 8080`
   - SSE: `npx @tools/create-fastmcp-cli my-sse-mcp --transport sse --port 9090`
+- **Non-interactive creation**:
+  - `npx @tools/create-fastmcp-cli my-mcp-project --no-interactive`
+  - `npx @tools/create-fastmcp-cli my-web-mcp --transport httpStream --port 8080 --no-interactive`

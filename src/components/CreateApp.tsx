@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Box, Text, useApp } from 'ink';
 import ProjectNameInput from './ProjectNameInput.js';
 import TransportSelector from './TransportSelector.js';
@@ -10,20 +10,12 @@ const CreateApp: React.FC<CreateAppProps> = ({
   projectName: initialProjectName,
   transport: initialTransport = 'stdio',
   port: initialPort = '3000',
-  interactive = true,
 }) => {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(initialProjectName ? 1 : 0); // 如果已有项目名，从传输类型选择开始
   const [projectName, setProjectName] = useState(initialProjectName || '');
   const [transport, setTransport] = useState<TransportType>(initialTransport);
   const [port, setPort] = useState(initialPort);
   const { exit } = useApp();
-
-  useEffect(() => {
-    // 如果是非交互模式且有项目名称，直接跳到生成步骤
-    if (!interactive && initialProjectName) {
-      setStep(3);
-    }
-  }, [interactive, initialProjectName]);
 
   const handleProjectNameSubmit = (name: string) => {
     setProjectName(name);
@@ -33,7 +25,7 @@ const CreateApp: React.FC<CreateAppProps> = ({
   const handleTransportSelect = (selectedTransport: TransportType) => {
     setTransport(selectedTransport);
     if (selectedTransport === 'stdio') {
-      setStep(3); // 跳过端口设置
+      setStep(3); // 跳过端口设置，直接到生成步骤
     } else {
       setStep(2);
     }
