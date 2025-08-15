@@ -73,8 +73,7 @@ class MCPServer {
       // 启动 FastMCP 服务器，使用 SSE 传输
       await this.server.start({
         transportType: 'sse',
-        sse: { port },
-        timeout: 120000, // 2分钟超时
+        sse: { port }
       });
 
       logger.info(

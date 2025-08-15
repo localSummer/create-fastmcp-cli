@@ -72,8 +72,7 @@ class MCPServer {
       // 启动 FastMCP 服务器，使用 HTTP Stream 传输
       await this.server.start({
         transportType: 'httpStream',
-        httpStream: { port },
-        timeout: 120000, // 2分钟超时
+        httpStream: { port }
       });
 
       logger.info(
