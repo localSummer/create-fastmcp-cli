@@ -1,4 +1,4 @@
-# cnpm-create-fastmcp-cli
+# @tools/create-fastmcp-cli
 
 快速创建基于 fastmcp TypeScript 的 MCP 服务器项目的 CLI 工具
 
@@ -13,7 +13,7 @@
 ## 安装
 
 ```bash
-npm install -g cnpm-create-fastmcp-cli
+npm install -g @tools/create-fastmcp-cli
 ```
 
 ## 使用方法
@@ -21,20 +21,20 @@ npm install -g cnpm-create-fastmcp-cli
 ### 交互式创建项目
 
 ```bash
-npx cnpm-create-fastmcp-cli
+npx @tools/create-fastmcp-cli
 ```
 
 ### 使用命令行参数
 
 ```bash
 # 创建 STDIO 项目
-npx cnpm-create-fastmcp-cli my-mcp-project
+npx @tools/create-fastmcp-cli my-mcp-project
 
 # 创建 HTTP Stream 项目
-npx cnpm-create-fastmcp-cli my-web-mcp --transport httpStream --port 8080
+npx @tools/create-fastmcp-cli my-web-mcp --transport httpStream --port 8080
 
 # 创建 SSE 项目  
-npx cnpm-create-fastmcp-cli my-sse-mcp --transport sse --port 9090
+npx @tools/create-fastmcp-cli my-sse-mcp --transport sse --port 9090
 ```
 
 ## 命令行选项

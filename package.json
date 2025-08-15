@@ -1,11 +1,10 @@
 {
-  "name": "cnpm-create-fastmcp-cli",
+  "name": "@tools/create-fastmcp-cli",
   "version": "1.0.0",
   "description": "快速创建基于fastmcp TypeScript的MCP服务器项目的CLI工具",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "cnpm-create-fastmcp-cli": "./dist/index.js",
     "create-fastmcp-cli": "./dist/index.js"
   },
   "scripts": {
