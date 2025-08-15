@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is `@tools/create-fastmcp-cli` (version 1.0.12) - a CLI tool for rapidly creating MCP (Model Context Protocol) server projects based on FastMCP and TypeScript. The tool generates complete project templates with three transport types: STDIO, HTTP Stream, and SSE.
+This is `@tools/create-fastmcp-cli` - a CLI tool for rapidly creating MCP (Model Context Protocol) server projects based on FastMCP and TypeScript. The tool generates complete project templates with three transport types: STDIO, HTTP Stream, and SSE.
 
 ## Architecture
 
