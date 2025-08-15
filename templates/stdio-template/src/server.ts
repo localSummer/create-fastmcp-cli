@@ -70,7 +70,6 @@ class MCPServer {
       // 启动 FastMCP 服务器，使用 STDIO 传输
       await this.server.start({
         transportType: 'stdio',
-        timeout: 120000, // 2分钟超时
       });
     } catch (error) {
       logger.error(
