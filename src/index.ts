@@ -21,7 +21,7 @@ const program = new Command();
 program
   .name('create-fastmcp-cli')
   .description('快速创建基于fastmcp TypeScript的MCP服务器项目')
-  .version('1.0.5')
+  .version("1.0.7")
   .argument('[project-name]', '项目名称')
   .option('-t, --transport <type>', '传输类型 (stdio|httpStream|sse)', 'stdio')
   .option('-p, --port <port>', 'HTTP服务端口 (仅用于httpStream和sse)', '3000')
