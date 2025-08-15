@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-import MCPServer from './server';
 import dotenv from 'dotenv';
-import logger from './logger';
+import MCPServer from './server.js';
+import logger from './logger.js';
 
 // 加载环境变量
 dotenv.config();

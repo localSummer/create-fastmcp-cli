@@ -1,10 +1,10 @@
 import { FastMCP } from 'fastmcp';
 import path from 'path';
 import fs from 'fs';
-import { registerTools } from './tools';
-import { registerResources } from './resources';
-import { registerPrompts } from './prompts';
-import logger from './logger';
+import { registerTools } from './tools/index.js';
+import { registerResources } from './resources/index.js';
+import { registerPrompts } from './prompts/index.js';
+import logger from './logger.js';
 
 /**
  * MCP 服务器类，用于 STDIO 传输

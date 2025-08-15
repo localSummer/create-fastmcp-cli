@@ -1,6 +1,6 @@
 import { FastMCP } from 'fastmcp';
-import { registerGreetTool } from './greet';
-import logger from '../logger';
+import { registerGreetTool } from './greet.js';
+import logger from '../logger.js';
 
 /**
  * 注册所有 STDIO 模板的工具到 MCP 服务器

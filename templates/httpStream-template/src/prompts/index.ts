@@ -1,6 +1,6 @@
 import { FastMCP } from 'fastmcp';
-import { registerGitCommitPrompt } from './git-commit';
-import logger from '../logger';
+import { registerGitCommitPrompt } from './git-commit.js';
+import logger from '../logger.js';
 
 /**
  * 注册所有 HTTP Stream 模板的提示到 MCP 服务器

@@ -1,6 +1,6 @@
 import { FastMCP } from 'fastmcp';
-import { registerReadFileResource } from './read-file';
-import logger from '../logger';
+import { registerReadFileResource } from './read-file.js';
+import logger from '../logger.js';
 
 /**
  * 注册所有 SSE 模板的资源到 MCP 服务器
