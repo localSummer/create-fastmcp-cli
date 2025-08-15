@@ -44,6 +44,41 @@ export async function generateProject(data: TemplateData): Promise<void> {
 }
 
 /**
+ * 自定义递归拷贝目录函数，确保所有文件（包括 dotfiles）都被正确拷贝
+ * @param {string} srcDir - 源目录路径
+ * @param {string} destDir - 目标目录路径
+ * @returns {Promise<void>} 无返回值的 Promise
+ */
+async function copyDirectoryRecursively(
+  srcDir: string,
+  destDir: string
+): Promise<void> {
+  // 确保目标目录存在
+  await fs.ensureDir(destDir);
+
+  // 读取源目录中的所有文件和子目录（包括隐藏文件）
+  const items = await fs.readdir(srcDir, { withFileTypes: true });
+
+  for (const item of items) {
+    const srcPath = path.join(srcDir, item.name);
+    const destPath = path.join(destDir, item.name);
+
+    if (item.isDirectory()) {
+      // 递归拷贝子目录
+      await copyDirectoryRecursively(srcPath, destPath);
+    } else if (item.isFile()) {
+      // 拷贝文件，确保父目录存在
+      await fs.ensureDir(path.dirname(destPath));
+      await fs.copyFile(srcPath, destPath);
+      
+      // 保持文件权限
+      const stats = await fs.stat(srcPath);
+      await fs.chmod(destPath, stats.mode);
+    }
+  }
+}
+
+/**
  * 根据传输类型拷贝对应的模板目录
  * @param {string} transport - 传输类型 ('stdio', 'httpStream', 'sse')
  * @param {string} projectPath - 项目路径
@@ -63,8 +98,8 @@ async function copyTemplateDirectory(
     throw new Error(`模板目录不存在: ${templatePath}`);
   }
 
-  // 拷贝整个模板目录到项目路径
-  await fs.copy(templatePath, projectPath);
+  // 使用自定义拷贝函数确保所有文件（包括 dotfiles）都被拷贝
+  await copyDirectoryRecursively(templatePath, projectPath);
 }
 
 /**

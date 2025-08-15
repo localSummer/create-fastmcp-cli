@@ -4,13 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is `@tools/create-fastmcp-cli` - a CLI tool for rapidly creating MCP (Model Context Protocol) server projects based on FastMCP and TypeScript. The tool generates complete project templates with three transport types: STDIO, HTTP Stream, and SSE.
+This is `@tools/create-fastmcp-cli` (version 1.0.8-beta.4) - a CLI tool for rapidly creating MCP (Model Context Protocol) server projects based on FastMCP and TypeScript. The tool generates complete project templates with three transport types: STDIO, HTTP Stream, and SSE.
 
 ## Architecture
 
 ### Core Components
 - **CLI Entry Point** (`src/index.ts`): Command line argument parsing using Commander.js, validation, and application bootstrapping
 - **Interactive UI** (`src/components/`): React-based terminal interface using Ink for step-by-step project configuration
+  - `CreateApp.tsx`: Main application component orchestrating the UI flow
+  - `ProjectNameInput.tsx`: Project name input component
+  - `TransportSelector.tsx`: Transport type selection component  
+  - `PortInput.tsx`: Port configuration for HTTP/SSE transports
+  - `ProjectGenerator.tsx`: Final project generation component
 - **Project Generation** (`src/utils/projectGenerator.ts`): Core logic for copying templates, variable substitution, and dependency installation
 - **Template Engine** (`src/utils/templateEngine.ts`): Handles variable replacement in template files
 - **Type Definitions** (`src/types/index.ts`): TypeScript interfaces for transport types and configuration
@@ -31,10 +36,10 @@ Templates are stored in `templates/` directory with three variants:
 ## Development Commands
 
 ```bash
-# Development mode with hot reload
+# Development mode with hot reload using tsx
 npm run dev
 
-# Build the project
+# Build the project (TypeScript compilation)
 npm run build
 
 # Run the built CLI
@@ -65,10 +70,42 @@ npm run fix-imports
 - **Interactive**: Step-by-step UI (default)
 - **Non-interactive**: Direct project generation with `--no-interactive` flag
 
+### Command Line Interface
+Supports the following usage patterns:
+```bash
+# Interactive mode (default)
+npx @tools/create-fastmcp-cli
+
+# With project name
+npx @tools/create-fastmcp-cli my-project
+
+# With transport type and port
+npx @tools/create-fastmcp-cli my-project --transport httpStream --port 8080
+
+# Non-interactive mode
+npx @tools/create-fastmcp-cli my-project --no-interactive
+```
+
+Available CLI options:
+- `[project-name]` - Project name
+- `-t, --transport <type>` - Transport type (stdio|httpStream|sse, default: stdio)
+- `-p, --port <port>` - HTTP service port (for httpStream and sse, default: 3000)
+- `--no-interactive` - Skip interactive UI
+
 ## File Processing Notes
 
 When modifying templates or core generation logic:
-- Template files support variable substitution in content
+- Template files support variable substitution in content using `{{variable}}` syntax
+- Only text files are processed: `.ts`, `.js`, `.json`, `.md`, `.txt`, `.yml`, `.yaml`
 - The `projectGenerator.ts` automatically installs npm dependencies after generation
 - Error handling includes cleanup of partially created projects
 - Cross-platform compatibility for Windows (npm.cmd vs npm)
+- Binary files and directories like `node_modules`, `.git`, `dist`, `.vscode` are skipped during processing
+
+## TypeScript Configuration Notes
+
+- Node.js >= 16.0.0 required
+- Uses NodeNext module resolution with strict ESM mode
+- React JSX configuration for Ink components
+- Build output to `dist/` directory with declaration files
+- Templates directory excluded from TypeScript compilation
