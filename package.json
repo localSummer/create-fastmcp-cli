@@ -1,12 +1,10 @@
 {
   "name": "@tools/create-fastmcp-cli",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "快速创建基于fastmcp TypeScript的MCP服务器项目的CLI工具",
   "type": "module",
   "main": "dist/index.js",
-  "bin": {
-    "create-fastmcp-cli": "./dist/index.js"
-  },
+  "bin": "./dist/index.js",
   "scripts": {
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
