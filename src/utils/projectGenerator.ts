@@ -163,6 +163,7 @@ async function safeCleanup(projectPath: string): Promise<void> {
 
 /**
  * 自定义递归拷贝目录函数，确保所有文件（包括 dotfiles）都被正确拷贝
+ * 特别处理 .gitignore.template 文件，在拷贝时自动重命名为 .gitignore
  * @param {string} srcDir - 源目录路径
  * @param {string} destDir - 目标目录路径
  * @returns {Promise<void>} 无返回值的 Promise
@@ -179,7 +180,13 @@ async function copyDirectoryRecursively(
 
   for (const item of items) {
     const srcPath = path.join(srcDir, item.name);
-    const destPath = path.join(destDir, item.name);
+    let destPath = path.join(destDir, item.name);
+
+    // 处理 .gitignore.template 文件，拷贝时重命名为 .gitignore
+    // 这样做是为了避免 npm 自动将 .gitignore 重命名为 .npmignore 的行为
+    if (item.isFile() && item.name.endsWith(".gitignore.template")) {
+      destPath = path.join(destDir, ".gitignore");
+    }
 
     if (item.isDirectory()) {
       // 递归拷贝子目录

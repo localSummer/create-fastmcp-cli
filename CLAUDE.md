@@ -105,16 +105,24 @@ When modifying templates or core generation logic:
 - Error handling includes cleanup of partially created projects
 - Cross-platform compatibility for Windows (npm.cmd vs npm)
 - Binary files and directories like `node_modules`, `.git`, `dist`, `.vscode` are skipped during processing
-- Template directories contain `.gitignore` files directly (no longer using `.gitignore.template`)
+- **Template directories use `.gitignore.template` files that are renamed to `.gitignore` during project generation**
+
+## Why .gitignore.template?
+
+The project uses `.gitignore.template` instead of `.gitignore` directly for the following reason:
+
+**npm Automatic Renaming Behavior**: When using `npx` or `npm init` with packages containing `.gitignore` files, npm automatically renames them to `.npmignore` to prevent overwriting existing user files. This is npm's built-in protection mechanism.
+
+**Solution**: By using `.gitignore.template`, we bypass this automatic renaming and ensure users get proper `.gitignore` files in their generated projects.
+
+**Industry Standard**: This approach is used by popular scaffolding tools like create-react-app and is the recommended practice.
 
 ## npm Publishing Configuration
 
 The package uses a `"files"` field in `package.json` to ensure all necessary files are included:
 - `dist/` - Compiled JavaScript output
-- `templates/` - All template directories including `.gitignore` files
+- `templates/` - All template directories including `.gitignore.template` files
 - `docs/` - Documentation files
-
-This ensures `.gitignore` files within templates are preserved during npm publish.
 
 ## TypeScript Configuration Notes
 
