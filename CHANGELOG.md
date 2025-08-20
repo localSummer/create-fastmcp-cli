@@ -5,16 +5,25 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 并且遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.0.20-beta.1] - 2025-08-20
+
+### 修复
+- **解决 npm 自动重命名问题**：恢复使用 `.gitignore.template` 避免 npm 将 `.gitignore` 自动重命名为 `.npmignore`
+- 恢复 `projectGenerator.ts` 中对 `.gitignore.template` 的特殊处理逻辑
+- 确保用户生成的项目包含正确的 `.gitignore` 文件
+
+### 文档
+- 在 `CLAUDE.md` 中详细说明为什么使用 `.gitignore.template` 的技术原因
+- 添加对 npm 自动重命名行为的解释和行业标准做法说明
+
 ## [1.0.20-beta.0] - 2025-08-20
 
 ### 重构
-- 使用 `.gitignore` 替代 `.gitignore.template` 简化模板处理机制
-- 移除 `projectGenerator.ts` 中的文件重命名特殊逻辑
+- ~~使用 `.gitignore` 替代 `.gitignore.template` 简化模板处理机制~~ (已回滚)
+- ~~移除 `projectGenerator.ts` 中的文件重命名特殊逻辑~~ (已恢复)
 - 在 `package.json` 中添加 `files` 字段确保模板文件正确发布
-- 更新 `CLAUDE.md` 文档说明新的文件处理方式
 
 ### 优化
-- 简化文件拷贝逻辑，提升代码可维护性
 - 优化 npm 发布配置，确保所有必要文件被包含
 
 ## [1.0.19] - 2025-08-20
