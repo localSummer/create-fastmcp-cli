@@ -5,6 +5,18 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 并且遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.0.20-beta.0] - 2025-08-20
+
+### 重构
+- 使用 `.gitignore` 替代 `.gitignore.template` 简化模板处理机制
+- 移除 `projectGenerator.ts` 中的文件重命名特殊逻辑
+- 在 `package.json` 中添加 `files` 字段确保模板文件正确发布
+- 更新 `CLAUDE.md` 文档说明新的文件处理方式
+
+### 优化
+- 简化文件拷贝逻辑，提升代码可维护性
+- 优化 npm 发布配置，确保所有必要文件被包含
+
 ## [1.0.19] - 2025-08-20
 
 ### 新增
