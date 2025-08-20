@@ -1,6 +1,6 @@
 {
   "name": "@tools/create-fastmcp-cli",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "快速创建基于fastmcp TypeScript的MCP服务器项目的CLI工具",
   "type": "module",
   "main": "dist/index.js",
