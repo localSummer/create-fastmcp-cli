@@ -110,6 +110,43 @@ async function writeToFile(content) {
   }
 }
 
+async function copyToTemplates(content) {
+  console.log(chalk.blue("正在复制文档到模板目录..."));
+
+  const templateDirs = [
+    "stdio-template",
+    "httpStream-template",
+    "sse-template",
+  ];
+
+  for (const templateDir of templateDirs) {
+    try {
+      const templateDocsDir = path.join(
+        __dirname,
+        "..",
+        "templates",
+        templateDir,
+        "docs",
+      );
+      const templateDocsFile = path.join(templateDocsDir, "fastmcp.md");
+
+      // 确保模板的 docs 目录存在
+      await fs.ensureDir(templateDocsDir);
+
+      // 写入文件
+      await fs.writeFile(templateDocsFile, content, "utf8");
+
+      console.log(
+        chalk.green(
+          `✓ 成功复制到: ${path.relative(process.cwd(), templateDocsFile)}`,
+        ),
+      );
+    } catch (error) {
+      throw new Error(`复制文档到 ${templateDir} 失败: ${error.message}`);
+    }
+  }
+}
+
 async function main() {
   try {
     console.log(chalk.cyan("🚀 开始获取 FastMCP Core Concepts 文档\n"));
@@ -129,10 +166,14 @@ async function main() {
     // 写入文件
     await writeToFile(finalContent);
 
+    // 复制文档到模板目录
+    await copyToTemplates(finalContent);
+
     console.log(chalk.cyan("\n🎉 文档获取完成!"));
     console.log(
       chalk.gray(`文件保存位置: ${path.relative(process.cwd(), OUTPUT_FILE)}`),
     );
+    console.log(chalk.gray("已复制到所有模板目录的 docs/ 文件夹中"));
   } catch (error) {
     console.error(chalk.red("\n❌ 错误:"), error.message);
     process.exit(1);
