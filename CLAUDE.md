@@ -47,6 +47,9 @@ npm start
 
 # Fix TypeScript import extensions for ESM compatibility
 npm run fix-imports
+
+# Fetch FastMCP documentation for development reference
+npm run fetch-fastmcp-docs
 ```
 
 ## Key Technical Details
@@ -91,6 +94,7 @@ Available CLI options:
 - `-t, --transport <type>` - Transport type (stdio|httpStream|sse, default: stdio)
 - `-p, --port <port>` - HTTP service port (for httpStream and sse, default: 3000)
 - `--no-interactive` - Skip interactive UI
+- `--no-git` - Skip git repository initialization
 
 ## File Processing Notes
 
@@ -101,6 +105,16 @@ When modifying templates or core generation logic:
 - Error handling includes cleanup of partially created projects
 - Cross-platform compatibility for Windows (npm.cmd vs npm)
 - Binary files and directories like `node_modules`, `.git`, `dist`, `.vscode` are skipped during processing
+- Template directories contain `.gitignore` files directly (no longer using `.gitignore.template`)
+
+## npm Publishing Configuration
+
+The package uses a `"files"` field in `package.json` to ensure all necessary files are included:
+- `dist/` - Compiled JavaScript output
+- `templates/` - All template directories including `.gitignore` files
+- `docs/` - Documentation files
+
+This ensures `.gitignore` files within templates are preserved during npm publish.
 
 ## TypeScript Configuration Notes
 
