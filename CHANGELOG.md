@@ -5,6 +5,16 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 并且遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.0.21] - 2025-08-20
+
+### 新增
+- 增强 fetch-fastmcp-docs 脚本，自动复制文档到所有模板目录
+- 新创建的项目现在会包含最新的 FastMCP 使用文档
+
+### 改进
+- fetch-fastmcp-docs 脚本现在会自动在三个模板目录中创建 docs 文件夹
+- 确保所有模板项目都包含统一的 FastMCP 文档
+
 ## [1.0.20] - 2025-08-20
 
 ### 修复
